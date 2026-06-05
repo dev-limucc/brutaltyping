@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "brutaltyping",
+  "version": "${version}",
+  "name": "Brutal Typing",
+  "description": "Ridiculous-Coding for Minecraft. Every keystroke in chat and text fields detonates with explosions, fire, soul fire, brutal flying letters, screen shake and explosion sounds. The faster you type, the hotter the amplifier gets — bigger booms, hotter letters, higher-pitched sound. Fully customizable via a tabbed ModMenu settings GUI.",
+  "authors": ["Limucc-dev"],
+  "contact": {
+    "sources": "https://github.com/dev-limucc/brutaltyping"
+  },
+  "license": "MIT",
+  "icon": "assets/brutaltyping/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "main":    ["dev.limucc.brutaltyping.BrutalTyping"],
+    "client":  ["dev.limucc.brutaltyping.client.BrutalTypingClient"],
+    "modmenu": ["dev.limucc.brutaltyping.client.ModMenuIntegration"]
+  },
+  "mixins": [
+    {
+      "config": "brutaltyping.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.2",
+    "minecraft":    "~26.1",
+    "java":         ">=25",
+    "fabric-api":   "*"
+  },
+  "suggests": {
+    "modmenu": "*"
+  }
+}
