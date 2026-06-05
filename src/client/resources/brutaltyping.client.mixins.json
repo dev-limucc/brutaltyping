@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.limucc.brutaltyping.client.mixin",
+  "client": [
+    "ChatScreenMixin",
+    "EditBoxMixin",
+    "GuiMixin",
+    "ScreenMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

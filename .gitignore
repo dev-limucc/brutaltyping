@@ -1,0 +1,26 @@
+# Gradle
+.gradle/
+build/
+
+# Loom
+.loom-cache/
+
+# IDEs
+.idea/
+*.iml
+out/
+.classpath
+.project
+.settings/
+bin/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Dev run data
+run/
+
+# Gallery media (kept local + on the Modrinth gallery, not in source control)
+screenshots/
