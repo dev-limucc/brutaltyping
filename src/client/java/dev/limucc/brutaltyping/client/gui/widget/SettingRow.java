@@ -1,7 +1,7 @@
 package dev.limucc.brutaltyping.client.gui.widget;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import dev.limucc.brutaltyping.client.compat.Gfx;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleConsumer;
@@ -71,7 +71,7 @@ public class SettingRow {
 
     public boolean inRow(double my) { return my >= y && my < y + ROW_H; }
 
-    public void render(GuiGraphicsExtractor g, Font font, int mouseX, int mouseY) {
+    public void render(Gfx g, Font font, int mouseX, int mouseY) {
         g.text(font, label, x, y + (ROW_H - 8) / 2, 0xFFE0E0E0);
         int cx = controlX(), cy = controlY();
         boolean hover = inControl(mouseX, mouseY);
@@ -107,7 +107,7 @@ public class SettingRow {
         }
     }
 
-    private static void box(GuiGraphicsExtractor g, int cx, int cy, boolean hover) {
+    private static void box(Gfx g, int cx, int cy, boolean hover) {
         g.fill(cx, cy, cx + CONTROL_W, cy + CONTROL_H, hover ? 0xFF3A6EA5 : 0xFF26262B);
         g.fill(cx, cy, cx + CONTROL_W, cy + 1, 0x22FFFFFF);
         g.fill(cx, cy + CONTROL_H - 1, cx + CONTROL_W, cy + CONTROL_H, 0x44000000);

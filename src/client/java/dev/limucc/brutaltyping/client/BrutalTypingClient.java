@@ -1,21 +1,15 @@
 package dev.limucc.brutaltyping.client;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import dev.limucc.brutaltyping.BrutalTyping;
+import dev.limucc.brutaltyping.client.compat.KeyCompat;
 import dev.limucc.brutaltyping.client.config.BrutalConfigManager;
 import dev.limucc.brutaltyping.client.engine.EffectEngine;
 import dev.limucc.brutaltyping.client.gui.BrutalTypingScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.resources.Identifier;
 
 public class BrutalTypingClient implements ClientModInitializer {
-
-    /** Options → Controls → Brutal Typing. */
-    public static final KeyMapping.Category CATEGORY =
-            KeyMapping.Category.register(Identifier.fromNamespaceAndPath(BrutalTyping.MOD_ID, "main"));
 
     public static KeyMapping OPEN_SETTINGS_KEY;
     public static KeyMapping TOGGLE_KEY;
@@ -24,10 +18,9 @@ public class BrutalTypingClient implements ClientModInitializer {
     public void onInitializeClient() {
         BrutalConfigManager.load();
 
-        OPEN_SETTINGS_KEY = KeyMappingHelper.registerKeyMapping(
-                new KeyMapping("key.brutaltyping.open_settings", InputConstants.UNKNOWN.getValue(), CATEGORY));
-        TOGGLE_KEY = KeyMappingHelper.registerKeyMapping(
-                new KeyMapping("key.brutaltyping.toggle", InputConstants.UNKNOWN.getValue(), CATEGORY));
+        // Options → Controls → Brutal Typing. Registration differs per MC version, hence KeyCompat.
+        OPEN_SETTINGS_KEY = KeyCompat.register("key.brutaltyping.open_settings");
+        TOGGLE_KEY = KeyCompat.register("key.brutaltyping.toggle");
 
         ClientTickEvents.END_CLIENT_TICK.register(mc -> {
             EffectEngine.INSTANCE.tick();   // cool the amplifier down + drain stale combos every tick

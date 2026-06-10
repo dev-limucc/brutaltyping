@@ -1,7 +1,7 @@
 package dev.limucc.brutaltyping.client.engine;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import dev.limucc.brutaltyping.client.compat.Gfx;
 import net.minecraft.world.item.ItemStack;
 
 /**
@@ -41,7 +41,7 @@ public class Particle {
         rot += vrot * dt;
     }
 
-    public void render(GuiGraphicsExtractor g, Font font, int sw, int sh) {
+    public void render(Gfx g, Font font, int sw, int sh) {
         float t = clamp01(life / maxLife);
         float a = 1f - t;                 // linear fade-out
         switch (kind) {
@@ -60,7 +60,7 @@ public class Particle {
         }
     }
 
-    private void renderItem(GuiGraphicsExtractor g) {
+    private void renderItem(Gfx g) {
         if (stack == null) return;
         g.pose().pushMatrix();
         g.pose().translate(x, y);
@@ -71,7 +71,7 @@ public class Particle {
     }
 
     // ── per-kind drawing ─────────────────────────────────────────────────────────
-    private void renderGlyph(GuiGraphicsExtractor g, Font font, float a) {
+    private void renderGlyph(Gfx g, Font font, float a) {
         if (glyph.isEmpty()) return;
         int w = font.width(glyph);
         g.pose().pushMatrix();
@@ -82,7 +82,7 @@ public class Particle {
         g.pose().popMatrix();
     }
 
-    private void renderSpark(GuiGraphicsExtractor g, float a) {
+    private void renderSpark(Gfx g, float a) {
         int s = Math.max(1, Math.round(size));
         int ix = Math.round(x), iy = Math.round(y);
         g.fill(ix - s, iy - s, ix + s, iy + s, withAlpha(color, a));
@@ -90,7 +90,7 @@ public class Particle {
     }
 
     /** Fire (orange/gold) or soul fire (cyan) — three nested teardrops that flicker and shrink as they rise. */
-    private void renderFlame(GuiGraphicsExtractor g, float t, float a, boolean soul) {
+    private void renderFlame(Gfx g, float t, float a, boolean soul) {
         float flicker = 0.7f + 0.3f * (float) Math.sin(seed + life * 26f);
         float s = size * (1f - t) * flicker;
         int cx = Math.round(x), cy = Math.round(y);
@@ -105,13 +105,13 @@ public class Particle {
         g.fill(cx - inner, cy - inner - 2, cx + inner, cy + inner, rgbAlpha(cInner, a));
     }
 
-    private void renderSmoke(GuiGraphicsExtractor g, float t, float a) {
+    private void renderSmoke(Gfx g, float t, float a) {
         int r = Math.max(1, Math.round(size * (0.4f + t)));
         int cx = Math.round(x), cy = Math.round(y);
         g.fill(cx - r, cy - r, cx + r, cy + r, rgbAlpha(color & 0xFFFFFF, a * 0.22f));
     }
 
-    private void renderDebris(GuiGraphicsExtractor g, float a) {
+    private void renderDebris(Gfx g, float a) {
         int r = Math.max(1, Math.round(size));
         g.pose().pushMatrix();
         g.pose().translate(x, y);
@@ -120,7 +120,7 @@ public class Particle {
         g.pose().popMatrix();
     }
 
-    private void renderShockwave(GuiGraphicsExtractor g, float t, float a) {
+    private void renderShockwave(Gfx g, float t, float a) {
         int cx = Math.round(x), cy = Math.round(y);
         int rad = Math.round(size * t);
         int th = 2;
@@ -130,12 +130,12 @@ public class Particle {
         if (rad > 6) ring(g, cx, cy, (int) (rad * 0.66f), 1, withAlpha(color, a * 0.5f));
     }
 
-    private void renderEnchant(GuiGraphicsExtractor g, float a) {
+    private void renderEnchant(Gfx g, float a) {
         float tw = 0.5f + 0.5f * (float) Math.sin(seed + life * 18f);
         drawSparkle(g, x, y, size * 3.2f, color, a * tw);
     }
 
-    private void renderFirework(GuiGraphicsExtractor g, float a) {
+    private void renderFirework(Gfx g, float a) {
         int cx = Math.round(x), cy = Math.round(y);
         g.fill(cx - 2, cy - 2, cx + 2, cy + 2, withAlpha(color, a * 0.5f)); // glow
         g.fill(cx - 1, cy - 1, cx + 1, cy + 1, withAlpha(color, a));
@@ -143,7 +143,7 @@ public class Particle {
     }
 
     // ── small drawing helpers ────────────────────────────────────────────────────
-    private static void ring(GuiGraphicsExtractor g, int cx, int cy, int r, int th, int col) {
+    private static void ring(Gfx g, int cx, int cy, int r, int th, int col) {
         if (r <= 0) return;
         g.fill(cx - r, cy - r, cx + r, cy - r + th, col);   // top
         g.fill(cx - r, cy + r - th, cx + r, cy + r, col);   // bottom
@@ -152,7 +152,7 @@ public class Particle {
     }
 
     /** A 4-point sparkle/crit star: a bright plus with a hot core. No font glyph required. */
-    private static void drawSparkle(GuiGraphicsExtractor g, float fx, float fy, float radius, int color, float a) {
+    private static void drawSparkle(Gfx g, float fx, float fy, float radius, int color, float a) {
         int cx = Math.round(fx), cy = Math.round(fy);
         int r = Math.max(1, Math.round(radius));
         int c = withAlpha(color, a);

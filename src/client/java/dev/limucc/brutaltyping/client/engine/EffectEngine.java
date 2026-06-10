@@ -3,7 +3,7 @@ package dev.limucc.brutaltyping.client.engine;
 import dev.limucc.brutaltyping.client.config.BrutalConfig;
 import dev.limucc.brutaltyping.client.config.BrutalConfigManager;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import dev.limucc.brutaltyping.client.compat.Gfx;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -156,7 +156,7 @@ public final class EffectEngine {
     }
 
     /** Draw particles, the slam, the impact frame, then the (optional) meter. Used by both screen and HUD. */
-    public void renderOverlay(GuiGraphicsExtractor g, int sw, int sh, Font font) {
+    public void renderOverlay(Gfx g, int sw, int sh, Font font) {
         for (int i = particles.size() - 1; i >= 0; i--) {
             Particle p = particles.get(i);
             p.update(dt);
@@ -371,7 +371,7 @@ public final class EffectEngine {
     }
 
     // ── send slam render ─────────────────────────────────────────────────────────
-    private void renderSlam(GuiGraphicsExtractor g, int sw, int sh) {
+    private void renderSlam(Gfx g, int sw, int sh) {
         if (!slamActive) return;
         slamLife += dt;
         float t = Particle.clamp01(slamLife / SLAM_MAX);
@@ -402,7 +402,7 @@ public final class EffectEngine {
     }
 
     // ── comic impact frame render ────────────────────────────────────────────────
-    private void renderImpact(GuiGraphicsExtractor g, int sw, int sh) {
+    private void renderImpact(Gfx g, int sw, int sh) {
         if (impactLife <= 0f) return;
         float p = impactLife / IMPACT_MAX;                  // 1 -> 0
         g.fill(0, 0, sw, sh, Particle.rgbAlpha(0xFFFFFF, Math.min(1f, p) * 0.5f));
@@ -428,7 +428,7 @@ public final class EffectEngine {
     }
 
     // ── meter (compact, repositionable, hidden by default) ───────────────────────
-    private void renderMeter(GuiGraphicsExtractor g, int sw, int sh, Font font) {
+    private void renderMeter(Gfx g, int sw, int sh, Font font) {
         BrutalConfig c = cfg();
         if (!c.showComboMeter) return;
         if (heat < 0.02f && combo <= 1) return;

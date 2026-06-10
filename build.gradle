@@ -1,9 +1,56 @@
-plugins {
-    id 'net.fabricmc.fabric-loom' version "${loom_version}"
-    id 'maven-publish'
+// Two Loom plugins exist since MC went unobfuscated: classic remapping Loom for 1.21.x
+// ('net.fabricmc.fabric-loom-remap') and the new non-remapping Loom for 26.1+
+// ('net.fabricmc.fabric-loom'). The plugins{} block can't choose conditionally, so we
+// resolve + apply by hand based on -Ptarget.
+buildscript {
+    repositories {
+        maven { url = 'https://maven.fabricmc.net/' }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        def tv = (project.findProperty('target') ?: '26.1.2').toString()
+        if (tv.startsWith('1.')) {
+            classpath "net.fabricmc.fabric-loom-remap:net.fabricmc.fabric-loom-remap.gradle.plugin:${project.legacy_loom_version}"
+        } else {
+            classpath "net.fabricmc.fabric-loom:net.fabricmc.fabric-loom.gradle.plugin:${project.loom_version}"
+        }
+    }
 }
 
-version = project.mod_version
+apply plugin: 'maven-publish'
+apply plugin: ((findProperty('target') ?: '26.1.2').toString().startsWith('1.')
+        ? 'net.fabricmc.fabric-loom-remap'
+        : 'net.fabricmc.fabric-loom')
+
+// ---- multi-version target matrix --------------------------------------------
+// Build one MC target with:  gradlew build -Ptarget=<key>     (default: 26.1.2)
+// Each jar covers the 'range' it declares in fabric.mod.json. 'legacy' targets are
+// obfuscated MC: they need Mojang mappings + remapped (mod*) dependencies.
+def TARGETS = [
+    '1.21.1':  [range: '>=1.21 <=1.21.1',    fapi: '0.116.12+1.21.1', modmenu: '11.0.4',        java: 21, legacy: true,  loaderReq: '>=0.16.9',
+                overlays: ['gfx-pose',    'input-legacy', 'hud-render',  'key-legacy', 'sound-plain']],
+    '1.21.3':  [range: '>=1.21.2 <=1.21.3',  fapi: '0.114.1+1.21.3',  modmenu: '12.0.1',        java: 21, legacy: true,  loaderReq: '>=0.16.9',
+                overlays: ['gfx-pose',    'input-legacy', 'hud-render',  'key-legacy', 'sound-plain']],
+    '1.21.4':  [range: '1.21.4',             fapi: '0.119.4+1.21.4',  modmenu: '13.0.4',        java: 21, legacy: true,  loaderReq: '>=0.16.9',
+                overlays: ['gfx-pose',    'input-legacy', 'hud-render',  'key-legacy', 'sound-plain']],
+    '1.21.5':  [range: '1.21.5',             fapi: '0.128.2+1.21.5',  modmenu: '14.0.2',        java: 21, legacy: true,  loaderReq: '>=0.16.9',
+                overlays: ['gfx-pose',    'input-legacy', 'hud-render',  'key-legacy', 'sound-legacy']],
+    '1.21.8':  [range: '>=1.21.6 <=1.21.8',  fapi: '0.136.1+1.21.8',  modmenu: '15.0.2',        java: 21, legacy: true,  loaderReq: '>=0.16.9',
+                overlays: ['gfx-matrix',  'input-legacy', 'hud-render',  'key-legacy', 'sound-legacy']],
+    '1.21.10': [range: '>=1.21.9 <=1.21.10', fapi: '0.138.4+1.21.10', modmenu: '16.0.1',        java: 21, legacy: true,  loaderReq: '>=0.16.9',
+                overlays: ['gfx-matrix',  'input-event',  'hud-render',  'key-event-rl', 'sound-legacy']],
+    '1.21.11': [range: '1.21.11',            fapi: '0.141.4+1.21.11', modmenu: '17.0.0',        java: 21, legacy: true,  loaderReq: '>=0.16.9',
+                overlays: ['gfx-matrix',  'input-event',  'hud-render',  'key-event',  'sound-legacy']],
+    '26.1.2':  [range: '~26.1',              fapi: '0.150.0+26.1.2',  modmenu: '18.0.0-beta.1', java: 25, legacy: false, loaderReq: '>=0.19.2',
+                overlays: ['gfx-extract', 'input-26',     'hud-extract', 'key-26',     'sound-26']],
+]
+
+def targetVer = (findProperty('target') ?: '26.1.2').toString()
+def t = TARGETS[targetVer]
+if (t == null) throw new GradleException("Unknown -Ptarget=${targetVer}. Known targets: ${TARGETS.keySet()}")
+
+version = "${project.mod_version}+mc${targetVer}"
 group   = project.maven_group
 
 base {
@@ -21,16 +68,27 @@ loom {
     }
 }
 
+// version-specific source overlays (Gfx facade, mixin + screen glue, key/sound compat)
+t.overlays.each { sourceSets.client.java.srcDir "src/client/versions/${it}/java" }
+
 repositories {
     mavenCentral()
     maven { url = "https://maven.terraformersmc.com/releases" }
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
-    implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+    minecraft "com.mojang:minecraft:${targetVer}"
+
+    if (t.legacy) {
+        mappings loom.officialMojangMappings()
+        modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+        modImplementation "net.fabricmc.fabric-api:fabric-api:${t.fapi}"
+        modImplementation "com.terraformersmc:modmenu:${t.modmenu}"
+    } else {
+        implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+        implementation "net.fabricmc.fabric-api:fabric-api:${t.fapi}"
+        implementation "com.terraformersmc:modmenu:${t.modmenu}"
+    }
 
     // MixinExtras is bundled by Fabric Loader at runtime; we only need it at compile time.
     compileOnly "io.github.llamalad7:mixinextras-fabric:${project.mixinextras_version}"
@@ -38,20 +96,25 @@ dependencies {
 }
 
 processResources {
-    def version = project.version
-    inputs.property "version", version
+    def props = [
+        version   : project.version.toString(),
+        mc_range  : t.range,
+        java_req  : t.java.toString(),
+        loader_req: t.loaderReq,
+    ]
+    inputs.properties props
     filesMatching("fabric.mod.json") {
-        expand "version": version
+        expand props
     }
 }
 
 tasks.withType(JavaCompile).configureEach {
-    it.options.release = 25
+    it.options.release = t.java
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_25
-    targetCompatibility = JavaVersion.VERSION_25
+    sourceCompatibility = JavaVersion.toVersion(t.java)
+    targetCompatibility = JavaVersion.toVersion(t.java)
 }
 
 jar {

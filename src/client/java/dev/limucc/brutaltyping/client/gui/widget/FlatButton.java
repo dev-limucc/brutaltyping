@@ -1,7 +1,7 @@
 package dev.limucc.brutaltyping.client.gui.widget;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import dev.limucc.brutaltyping.client.compat.Gfx;
 
 /**
  * Limucc-style flat button (from Trashventory): a dark rounded-feel rectangle with a 1px top highlight, an
@@ -31,11 +31,11 @@ public class FlatButton {
         return mx >= x && mx < x + w && my >= y && my < y + h;
     }
 
-    public void render(GuiGraphicsExtractor g, Font font, int mouseX, int mouseY, boolean enabled) {
+    public void render(Gfx g, Font font, int mouseX, int mouseY, boolean enabled) {
         render(g, font, mouseX, mouseY, enabled, false);
     }
 
-    public void render(GuiGraphicsExtractor g, Font font, int mouseX, int mouseY, boolean enabled, boolean active) {
+    public void render(Gfx g, Font font, int mouseX, int mouseY, boolean enabled, boolean active) {
         boolean hovered = enabled && contains(mouseX, mouseY);
         int bg = !enabled ? BG_OFF : (hovered ? BG_HOVER : (active ? BG_ACTIVE : BG));
         g.fill(x, y, x + w, y + h, bg);
