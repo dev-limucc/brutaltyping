@@ -1,5 +1,6 @@
 package dev.limucc.brutaltyping.client.engine;
 
+import dev.limucc.brutaltyping.client.compat.SoundCompat;
 import dev.limucc.brutaltyping.client.config.BrutalConfig;
 import dev.limucc.brutaltyping.client.config.SoundPreset;
 import net.minecraft.client.Minecraft;
@@ -45,7 +46,7 @@ public final class SoundDirector {
             case 3 -> SoundEvents.WOOD_BREAK;
             case 4 -> SoundEvents.STONE_BREAK;
             case 5 -> SoundEvents.GRAVEL_BREAK;
-            case 6 -> SoundEvents.ITEM_BREAK.value();
+            case 6 -> SoundCompat.itemBreak();
             default -> SoundEvents.NETHERITE_BLOCK_BREAK;
         };
         play(ev, 0.6f + rand.nextFloat() * 0.6f, Math.min(1.0f, cfg.soundVolume));

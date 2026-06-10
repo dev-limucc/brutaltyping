@@ -1,13 +1,12 @@
 package dev.limucc.brutaltyping.client.gui;
 
+import dev.limucc.brutaltyping.client.compat.Gfx;
 import dev.limucc.brutaltyping.client.config.BrutalConfig;
 import dev.limucc.brutaltyping.client.config.BrutalConfigManager;
 import dev.limucc.brutaltyping.client.gui.widget.FlatButton;
 import dev.limucc.brutaltyping.client.gui.widget.SettingRow;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
@@ -17,9 +16,10 @@ import java.util.Locale;
 /**
  * Tabbed settings GUI in the Limucc flat style. Each setting <i>type</i> gets its own tab. A live "try it
  * here" box at the bottom fires the full effect on this very screen (via the EditBox + Screen mixins) so you
- * can feel your tuning instantly. Drawn by hand in {@code extractRenderState}; hit-tested in mouseClicked.
+ * can feel your tuning instantly. All logic lives here; the per-MC-version {@code BrutalTypingScreen} subclass
+ * only adapts the render + mouse-click entry points, which changed signature across versions.
  */
-public class BrutalTypingScreen extends Screen {
+public abstract class BrutalScreenCore extends Screen {
 
     private static final String[] TAB_NAMES = {"General", "Voice", "Screen", "Brutality", "Amplifier", "Exclusive", "Info"};
     private static final String[] TAB_DESC = {
@@ -61,7 +61,7 @@ public class BrutalTypingScreen extends Screen {
     private int scroll = 0;
     private EditBox preview;
 
-    public BrutalTypingScreen(Screen parent) {
+    protected BrutalScreenCore(Screen parent) {
         super(Component.literal("Brutal Typing"));
         this.parent = parent;
     }
@@ -114,15 +114,15 @@ public class BrutalTypingScreen extends Screen {
             }
             case 1 -> { // Voice
                 r.add(SettingRow.cycle("Sound preset", () -> c.soundPreset.display, () -> { c.soundPreset = c.soundPreset.next(); save(); }));
-                r.add(SettingRow.slider("Volume", 0.0, 1.5, 0.05, () -> c.soundVolume, v -> { c.soundVolume = (float) v; save(); }, BrutalTypingScreen::f2));
-                r.add(SettingRow.slider("Pitch (cold)", 0.5, 1.5, 0.05, () -> c.pitchMin, v -> { c.pitchMin = (float) v; save(); }, BrutalTypingScreen::f2));
-                r.add(SettingRow.slider("Pitch (hot)", 1.0, 2.0, 0.05, () -> c.pitchMax, v -> { c.pitchMax = (float) v; save(); }, BrutalTypingScreen::f2));
+                r.add(SettingRow.slider("Volume", 0.0, 1.5, 0.05, () -> c.soundVolume, v -> { c.soundVolume = (float) v; save(); }, BrutalScreenCore::f2));
+                r.add(SettingRow.slider("Pitch (cold)", 0.5, 1.5, 0.05, () -> c.pitchMin, v -> { c.pitchMin = (float) v; save(); }, BrutalScreenCore::f2));
+                r.add(SettingRow.slider("Pitch (hot)", 1.0, 2.0, 0.05, () -> c.pitchMax, v -> { c.pitchMax = (float) v; save(); }, BrutalScreenCore::f2));
                 r.add(SettingRow.toggle("Milestone sounds", () -> c.milestoneSounds, () -> { c.milestoneSounds = !c.milestoneSounds; save(); }));
             }
             case 2 -> { // Screen
                 r.add(SettingRow.cycle("Shake target", () -> c.shakeTarget.display, () -> { c.shakeTarget = c.shakeTarget.next(); save(); }));
-                r.add(SettingRow.slider("Shake intensity", 0.0, 3.0, 0.1, () -> c.shakeIntensity, v -> { c.shakeIntensity = (float) v; save(); }, BrutalTypingScreen::f1));
-                r.add(SettingRow.slider("Settle speed", 4.0, 30.0, 1.0, () -> c.shakeDecay, v -> { c.shakeDecay = (float) v; save(); }, BrutalTypingScreen::f1));
+                r.add(SettingRow.slider("Shake intensity", 0.0, 3.0, 0.1, () -> c.shakeIntensity, v -> { c.shakeIntensity = (float) v; save(); }, BrutalScreenCore::f1));
+                r.add(SettingRow.slider("Settle speed", 4.0, 30.0, 1.0, () -> c.shakeDecay, v -> { c.shakeDecay = (float) v; save(); }, BrutalScreenCore::f1));
             }
             case 3 -> { // Brutality
                 r.add(SettingRow.toggle("Brutal flying letters", () -> c.brutalLetters, () -> { c.brutalLetters = !c.brutalLetters; save(); }));
@@ -132,15 +132,15 @@ public class BrutalTypingScreen extends Screen {
                 r.add(SettingRow.toggle("TNT explosions", () -> c.explosions, () -> { c.explosions = !c.explosions; save(); }));
                 r.add(SettingRow.toggle("Screen flash", () -> c.screenFlash, () -> { c.screenFlash = !c.screenFlash; save(); }));
                 r.add(SettingRow.toggle("ALL-CAPS importance", () -> c.capsImportance, () -> { c.capsImportance = !c.capsImportance; save(); }));
-                r.add(SettingRow.slider("Particle amount", 0.0, 2.0, 0.1, () -> c.particleAmount, v -> { c.particleAmount = (float) v; save(); }, BrutalTypingScreen::f1));
-                r.add(SettingRow.slider("Particle size", 0.2, 2.0, 0.1, () -> c.particleSize, v -> { c.particleSize = (float) v; save(); }, BrutalTypingScreen::f1));
-                r.add(SettingRow.slider("Gravity", 0.0, 2.0, 0.1, () -> c.gravity, v -> { c.gravity = (float) v; save(); }, BrutalTypingScreen::f1));
+                r.add(SettingRow.slider("Particle amount", 0.0, 2.0, 0.1, () -> c.particleAmount, v -> { c.particleAmount = (float) v; save(); }, BrutalScreenCore::f1));
+                r.add(SettingRow.slider("Particle size", 0.2, 2.0, 0.1, () -> c.particleSize, v -> { c.particleSize = (float) v; save(); }, BrutalScreenCore::f1));
+                r.add(SettingRow.slider("Gravity", 0.0, 2.0, 0.1, () -> c.gravity, v -> { c.gravity = (float) v; save(); }, BrutalScreenCore::f1));
             }
             case 4 -> { // Amplifier
-                r.add(SettingRow.slider("Sensitivity", 0.03, 0.5, 0.01, () -> c.sensitivity, v -> { c.sensitivity = (float) v; save(); }, BrutalTypingScreen::f2));
-                r.add(SettingRow.slider("Cool-down", 0.2, 3.0, 0.05, () -> c.coolDown, v -> { c.coolDown = (float) v; save(); }, BrutalTypingScreen::f2));
-                r.add(SettingRow.slider("Max strength", 1.0, 5.0, 0.1, () -> c.strength, v -> { c.strength = (float) v; save(); }, BrutalTypingScreen::f1));
-                r.add(SettingRow.slider("Combo window", 400, 3000, 50, () -> c.comboWindowMs, v -> { c.comboWindowMs = (int) Math.round(v); save(); }, BrutalTypingScreen::ms));
+                r.add(SettingRow.slider("Sensitivity", 0.03, 0.5, 0.01, () -> c.sensitivity, v -> { c.sensitivity = (float) v; save(); }, BrutalScreenCore::f2));
+                r.add(SettingRow.slider("Cool-down", 0.2, 3.0, 0.05, () -> c.coolDown, v -> { c.coolDown = (float) v; save(); }, BrutalScreenCore::f2));
+                r.add(SettingRow.slider("Max strength", 1.0, 5.0, 0.1, () -> c.strength, v -> { c.strength = (float) v; save(); }, BrutalScreenCore::f1));
+                r.add(SettingRow.slider("Combo window", 400, 3000, 50, () -> c.comboWindowMs, v -> { c.comboWindowMs = (int) Math.round(v); save(); }, BrutalScreenCore::ms));
                 r.add(SettingRow.toggle("WPM counter", () -> c.wpmCounter, () -> { c.wpmCounter = !c.wpmCounter; save(); }));
             }
             case 5 -> { // Exclusive
@@ -148,12 +148,12 @@ public class BrutalTypingScreen extends Screen {
                 r.add(SettingRow.toggle("Sharpness sparkles", () -> c.sharpness, () -> { c.sharpness = !c.sharpness; save(); }));
                 r.add(SettingRow.toggle("Milestone fireworks", () -> c.fireworks, () -> { c.fireworks = !c.fireworks; save(); }));
                 r.add(SettingRow.toggle("Weapon drops", () -> c.weaponDrops, () -> { c.weaponDrops = !c.weaponDrops; save(); }));
-                r.add(SettingRow.slider("Weapon drop chance", 0.0, 0.5, 0.01, () -> c.weaponDropChance, v -> { c.weaponDropChance = (float) v; save(); }, BrutalTypingScreen::pct));
+                r.add(SettingRow.slider("Weapon drop chance", 0.0, 0.5, 0.01, () -> c.weaponDropChance, v -> { c.weaponDropChance = (float) v; save(); }, BrutalScreenCore::pct));
                 r.add(SettingRow.toggle("Impact frames (space)", () -> c.impactFrames, () -> { c.impactFrames = !c.impactFrames; save(); }));
-                r.add(SettingRow.slider("Impact frame chance", 0.0, 0.5, 0.01, () -> c.impactFrameChance, v -> { c.impactFrameChance = (float) v; save(); }, BrutalTypingScreen::pct));
+                r.add(SettingRow.slider("Impact frame chance", 0.0, 0.5, 0.01, () -> c.impactFrameChance, v -> { c.impactFrameChance = (float) v; save(); }, BrutalScreenCore::pct));
                 r.add(SettingRow.toggle("Send-slam animation", () -> c.sendSlam, () -> { c.sendSlam = !c.sendSlam; save(); }));
                 r.add(SettingRow.toggle("Rainbow letters at max", () -> c.rainbowAtMax, () -> { c.rainbowAtMax = !c.rainbowAtMax; save(); }));
-                r.add(SettingRow.slider("Milestone every (combo)", 5, 100, 1, () -> c.milestoneEvery, v -> { c.milestoneEvery = (int) Math.round(v); save(); }, BrutalTypingScreen::intf));
+                r.add(SettingRow.slider("Milestone every (combo)", 5, 100, 1, () -> c.milestoneEvery, v -> { c.milestoneEvery = (int) Math.round(v); save(); }, BrutalScreenCore::intf));
             }
         }
         rows = r;
@@ -180,11 +180,8 @@ public class BrutalTypingScreen extends Screen {
         return Math.max(0, total - view);
     }
 
-    // ── rendering ────────────────────────────────────────────────────────────────
-    @Override
-    public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float a) {
-        super.extractRenderState(g, mouseX, mouseY, a);
-
+    // ── rendering (called by the per-version subclass AFTER super.render) ────────
+    protected void renderCore(Gfx g, int mouseX, int mouseY) {
         g.fill(panelLeft - 10, 4, panelRight + 10, this.height - 4, 0xC0121214);
         g.fill(panelLeft - 10, 4, panelRight + 10, 5, 0x22FFFFFF);
 
@@ -228,13 +225,8 @@ public class BrutalTypingScreen extends Screen {
         doneBtn.render(g, this.font, mouseX, mouseY, true);
     }
 
-    // ── input ────────────────────────────────────────────────────────────────────
-    @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-        if (super.mouseClicked(event, doubleClick)) return true;   // let the preview EditBox grab clicks first
-        if (event.button() != 0) return false;
-        double mx = event.x(), my = event.y();
-
+    // ── input (called by the per-version subclass for LEFT clicks) ───────────────
+    protected boolean clickCore(double mx, double my) {
         for (int i = 0; i < tabs.length; i++) {
             if (tabs[i].contains(mx, my)) {
                 if (i != activeTab) { activeTab = i; buildRows(); }
