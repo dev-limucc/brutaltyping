@@ -1,5 +1,6 @@
 package dev.limucc.brutaltyping.client.engine;
 
+import dev.limucc.brutaltyping.client.compat.ScreenNav;
 import dev.limucc.brutaltyping.client.config.BrutalConfig;
 import dev.limucc.brutaltyping.client.config.BrutalConfigManager;
 import dev.limucc.brutaltyping.client.gui.BrutalScreenCore;
@@ -36,7 +37,7 @@ public final class InputHooks {
     private static boolean shouldFire() {
         BrutalConfig c = BrutalConfigManager.get();
         if (!c.enabled) return false;
-        Screen screen = Minecraft.getInstance().screen;
+        Screen screen = ScreenNav.current(Minecraft.getInstance());
         if (screen == null) return false;
         if (screen instanceof BrutalScreenCore) return true;   // live preview on our own settings screen
         if (screen instanceof ChatScreen) return c.inChat;

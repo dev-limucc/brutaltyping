@@ -1,5 +1,6 @@
 package dev.limucc.brutaltyping.client.gui;
 
+import dev.limucc.brutaltyping.client.compat.ScreenNav;
 import dev.limucc.brutaltyping.client.compat.Gfx;
 import dev.limucc.brutaltyping.client.config.BrutalConfig;
 import dev.limucc.brutaltyping.client.config.BrutalConfigManager;
@@ -262,7 +263,7 @@ public abstract class BrutalScreenCore extends Screen {
     @Override
     public void onClose() {
         save();
-        this.minecraft.setScreen(this.parent);
+        ScreenNav.open(this.minecraft, this.parent);
     }
 
     // ── value formatters (Locale.ROOT so decimals stay dots) ─────────────────────

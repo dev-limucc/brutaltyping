@@ -1,5 +1,6 @@
 package dev.limucc.brutaltyping.client;
 
+import dev.limucc.brutaltyping.client.compat.ScreenNav;
 import dev.limucc.brutaltyping.BrutalTyping;
 import dev.limucc.brutaltyping.client.compat.KeyCompat;
 import dev.limucc.brutaltyping.client.config.BrutalConfigManager;
@@ -26,7 +27,7 @@ public class BrutalTypingClient implements ClientModInitializer {
             EffectEngine.INSTANCE.tick();   // cool the amplifier down + drain stale combos every tick
 
             while (OPEN_SETTINGS_KEY.consumeClick()) {
-                if (mc.screen == null) mc.setScreen(new BrutalTypingScreen(null));
+                if (ScreenNav.current(mc) == null) ScreenNav.open(mc, new BrutalTypingScreen(null));
             }
             while (TOGGLE_KEY.consumeClick()) {
                 var c = BrutalConfigManager.get();

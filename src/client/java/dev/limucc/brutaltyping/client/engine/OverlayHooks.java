@@ -1,5 +1,6 @@
 package dev.limucc.brutaltyping.client.engine;
 
+import dev.limucc.brutaltyping.client.compat.ScreenNav;
 import dev.limucc.brutaltyping.client.compat.Gfx;
 import dev.limucc.brutaltyping.client.config.BrutalConfig;
 import dev.limucc.brutaltyping.client.config.BrutalConfigManager;
@@ -41,7 +42,7 @@ public final class OverlayHooks {
 
     public static void hud(Gfx g) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.screen != null) return;                       // screens handled by the Screen mixin
+        if (ScreenNav.current(mc) != null) return;           // screens handled by the Screen mixin
         if (!BrutalConfigManager.get().enabled) return;
         EffectEngine.INSTANCE.beginFrame();
         EffectEngine.INSTANCE.renderOverlay(g,

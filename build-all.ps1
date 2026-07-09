@@ -2,11 +2,10 @@
 # Usage:  .\build-all.ps1
 $ErrorActionPreference = "Stop"
 
-if (-not $env:JAVA_HOME) {
-    $env:JAVA_HOME = "C:\Users\Windows 11\AppData\Roaming\ATLauncher\runtimes\minecraft\java-runtime-epsilon\windows-x64\java-runtime-epsilon"
-}
+# ALWAYS force the ATLauncher JDK 25: system-wide JAVA_HOME is Microsoft JDK 21 and cannot compile 26.x targets.
+$env:JAVA_HOME = "C:\Users\Windows 11\AppData\Roaming\ATLauncher\runtimes\minecraft\java-runtime-epsilon\windows-x64\java-runtime-epsilon"
 
-$targets = @('1.21.1', '1.21.3', '1.21.4', '1.21.5', '1.21.8', '1.21.10', '1.21.11', '26.1.2')
+$targets = @('1.21.1', '1.21.3', '1.21.4', '1.21.5', '1.21.8', '1.21.10', '1.21.11', '26.1.2', '26.2')
 $failed = @()
 
 foreach ($t in $targets) {

@@ -29,21 +29,23 @@ apply plugin: ((findProperty('target') ?: '26.1.2').toString().startsWith('1.')
 // obfuscated MC: they need Mojang mappings + remapped (mod*) dependencies.
 def TARGETS = [
     '1.21.1':  [range: '>=1.21 <=1.21.1',    fapi: '0.116.12+1.21.1', modmenu: '11.0.4',        java: 21, legacy: true,  loaderReq: '>=0.16.9',
-                overlays: ['gfx-pose',    'input-legacy', 'hud-render',  'key-legacy', 'sound-plain']],
+                overlays: ['gfx-pose',    'input-legacy', 'hud-render',  'key-legacy', 'sound-plain',  'nav-legacy']],
     '1.21.3':  [range: '>=1.21.2 <=1.21.3',  fapi: '0.114.1+1.21.3',  modmenu: '12.0.1',        java: 21, legacy: true,  loaderReq: '>=0.16.9',
-                overlays: ['gfx-pose',    'input-legacy', 'hud-render',  'key-legacy', 'sound-plain']],
+                overlays: ['gfx-pose',    'input-legacy', 'hud-render',  'key-legacy', 'sound-plain',  'nav-legacy']],
     '1.21.4':  [range: '1.21.4',             fapi: '0.119.4+1.21.4',  modmenu: '13.0.4',        java: 21, legacy: true,  loaderReq: '>=0.16.9',
-                overlays: ['gfx-pose',    'input-legacy', 'hud-render',  'key-legacy', 'sound-plain']],
+                overlays: ['gfx-pose',    'input-legacy', 'hud-render',  'key-legacy', 'sound-plain',  'nav-legacy']],
     '1.21.5':  [range: '1.21.5',             fapi: '0.128.2+1.21.5',  modmenu: '14.0.2',        java: 21, legacy: true,  loaderReq: '>=0.16.9',
-                overlays: ['gfx-pose',    'input-legacy', 'hud-render',  'key-legacy', 'sound-legacy']],
+                overlays: ['gfx-pose',    'input-legacy', 'hud-render',  'key-legacy', 'sound-legacy', 'nav-legacy']],
     '1.21.8':  [range: '>=1.21.6 <=1.21.8',  fapi: '0.136.1+1.21.8',  modmenu: '15.0.2',        java: 21, legacy: true,  loaderReq: '>=0.16.9',
-                overlays: ['gfx-matrix',  'input-legacy', 'hud-render',  'key-legacy', 'sound-legacy']],
+                overlays: ['gfx-matrix',  'input-legacy', 'hud-render',  'key-legacy', 'sound-legacy', 'nav-legacy']],
     '1.21.10': [range: '>=1.21.9 <=1.21.10', fapi: '0.138.4+1.21.10', modmenu: '16.0.1',        java: 21, legacy: true,  loaderReq: '>=0.16.9',
-                overlays: ['gfx-matrix',  'input-event',  'hud-render',  'key-event-rl', 'sound-legacy']],
+                overlays: ['gfx-matrix',  'input-event',  'hud-render',  'key-event-rl', 'sound-legacy', 'nav-legacy']],
     '1.21.11': [range: '1.21.11',            fapi: '0.141.4+1.21.11', modmenu: '17.0.0',        java: 21, legacy: true,  loaderReq: '>=0.16.9',
-                overlays: ['gfx-matrix',  'input-event',  'hud-render',  'key-event',  'sound-legacy']],
+                overlays: ['gfx-matrix',  'input-event',  'hud-render',  'key-event',  'sound-legacy', 'nav-legacy']],
     '26.1.2':  [range: '~26.1',              fapi: '0.150.0+26.1.2',  modmenu: '18.0.0-beta.1', java: 25, legacy: false, loaderReq: '>=0.19.2',
-                overlays: ['gfx-extract', 'input-26',     'hud-extract', 'key-26',     'sound-26']],
+                overlays: ['gfx-extract', 'input-26',     'hud-extract', 'key-26',     'sound-26',     'nav-legacy']],
+    '26.2':    [range: '~26.2',              fapi: '0.154.2+26.2',    modmenu: '20.0.0',        java: 25, legacy: false, loaderReq: '>=0.19.3',
+                overlays: ['gfx-extract', 'input-26',     'hud-extract', 'key-26',     'sound-26',     'nav-262']],
 ]
 
 def targetVer = (findProperty('target') ?: '26.1.2').toString()
