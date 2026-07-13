@@ -5,11 +5,15 @@ fire, soul fire, brutal flying letters, screen shake and explosion sounds. The f
 **amplifier** gets: bigger booms, hotter letters, higher-pitched sound, harder shake. Stop typing and it cools
 down, draining your combo. Pure dopamine, pure for fun.
 
+<p align="center">
+  <img src="https://cdn.modrinth.com/data/PJ36wjo4/images/3e13dbd60451b3035f623db69028fbaa1d25579e.gif" alt="Brutal Typing — chat in action" width="80%" />
+</p>
+
 **Directly inspired by** the [Ridiculous Coding](https://marketplace.visualstudio.com/items?itemName=Merenut.ridiculous-coding)
 and [Power Mode](https://github.com/hoovercj/vscode-power-mode) VS Code extensions — this is the Minecraft take on them.
 
 Client-side only. Built for **Minecraft 26.1.2 / Fabric**, in the flat *Limucc UI* style (shared with Trashventory).
-By **Limucc-dev** · [github.com/dev-limucc](https://github.com/dev-limucc) · [modrinth.com/user/dev-limucc](https://modrinth.com/user/dev-limucc).
+By **Limucc-dev** · [github.com/dev-limucc](https://github.com/dev-limucc) · [modrinth.com/user/Limucc](https://modrinth.com/user/Limucc).
 
 ---
 
@@ -84,3 +88,9 @@ The `SoundPreset` enum (`src/client/.../config/SoundPreset.java`) is the single 
 - `gui/BrutalTypingScreen` — the tabbed settings GUI in the Limucc flat style.
 
 *Style & code by dev-limucc. Reuse freely.*
+
+## Gallery
+
+<p align="center">
+  <img src="https://cdn.modrinth.com/data/PJ36wjo4/images/9c9a52e276ae93bb080bc463cd57209f964a74da.png" alt="Settings UI of the mod" width="70%" />
+</p>
