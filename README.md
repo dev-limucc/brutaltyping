@@ -1,5 +1,7 @@
 # Brutal Typing
 
+[![build](https://github.com/dev-limucc/brutaltyping/actions/workflows/build.yml/badge.svg)](https://github.com/dev-limucc/brutaltyping/actions/workflows/build.yml)
+
 **Ridiculous-Coding, but for Minecraft.** Every keystroke in chat (and any text field) **detonates** — explosions,
 fire, soul fire, brutal flying letters, screen shake and explosion sounds. The faster you type, the hotter the
 **amplifier** gets: bigger booms, hotter letters, higher-pitched sound, harder shake. Stop typing and it cools
