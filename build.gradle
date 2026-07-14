@@ -75,7 +75,7 @@ t.overlays.each { sourceSets.client.java.srcDir "src/client/versions/${it}/java"
 
 repositories {
     mavenCentral()
-    maven { url = "https://maven.terraformersmc.com/releases" }
+    maven { url = "https://api.modrinth.com/maven" }
 }
 
 dependencies {
@@ -85,11 +85,11 @@ dependencies {
         mappings loom.officialMojangMappings()
         modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
         modImplementation "net.fabricmc.fabric-api:fabric-api:${t.fapi}"
-        modImplementation "com.terraformersmc:modmenu:${t.modmenu}"
+        modImplementation "maven.modrinth:modmenu:${t.modmenu}"
     } else {
         implementation "net.fabricmc:fabric-loader:${project.loader_version}"
         implementation "net.fabricmc.fabric-api:fabric-api:${t.fapi}"
-        implementation "com.terraformersmc:modmenu:${t.modmenu}"
+        implementation "maven.modrinth:modmenu:${t.modmenu}"
     }
 
     // MixinExtras is bundled by Fabric Loader at runtime; we only need it at compile time.
