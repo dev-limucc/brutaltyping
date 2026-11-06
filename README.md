@@ -14,7 +14,7 @@ down, draining your combo. Pure dopamine, pure for fun.
 **Directly inspired by** the [Ridiculous Coding](https://marketplace.visualstudio.com/items?itemName=Merenut.ridiculous-coding)
 and [Power Mode](https://github.com/hoovercj/vscode-power-mode) VS Code extensions — this is the Minecraft take on them.
 
-Client-side only. Built for **Minecraft 26.1.2 / Fabric**, in the flat *Limucc UI* style (shared with Trashventory).
+Client-side only. Multi-version: **Minecraft 1.21.1 -> 26.3 / Fabric** (one jar per version line), in the flat *Limucc UI* style (shared with Trashventory).
 By **Limucc-dev** · [github.com/dev-limucc](https://github.com/dev-limucc) · [modrinth.com/user/Limucc](https://modrinth.com/user/Limucc).
 
 ---
@@ -56,17 +56,20 @@ Config is saved to `config/brutaltyping.json`.
 
 ## Build
 
-This mirrors Trashventory's toolchain exactly (Fabric Loom, **Java 25**, Loom `1.16-SNAPSHOT`, Fabric API
-`0.150.0+26.1.2`, ModMenu `18.0.0-beta.1`). Build it the same way you build Trashventory:
+Fabric Loom 1.19 + Gradle 9.8.2, **Java 25** for the 26.x targets (Java 21 for 1.21.x). Every Minecraft version is a
+`-Ptarget=<mc>` row in the `TARGETS` matrix of `build.gradle` (per-era source overlays in `src/client/versions/`):
 
 ```bash
-./gradlew build      # jar lands in build/libs/
-./gradlew runClient  # launch a dev client to try it
+./build-all.ps1                                  # all targets -> dist/brutaltyping-<ver>+mc<mc>.jar
+./gradlew build "-Ptarget=26.3"                  # one target
+./gradlew runClient "-Ptarget=26.3"              # dev client
+./gradlew runClientGameTest "-Ptarget=26.3"      # automated in-game test (mixin audit + every feature, screenshots)
+./gradlew runProductionClient "-Ptarget=26.3" -PprodWorld=<save>   # launch the BUILT jar in a vanilla-style client
 ```
 
 > Requires a **JDK 25** on your Gradle/IDE toolchain (the build sets `options.release = 25`). Open the folder in
 > your IDE (same setup as Trashventory) and run the `runClient` task, or drop the built jar + Fabric API + ModMenu
-> into a 26.1.2 Fabric `mods/` folder.
+> into a Fabric `mods/` folder of the matching Minecraft version.
 
 ### Custom sounds (optional)
 

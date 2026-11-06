@@ -85,6 +85,28 @@ fabricApi {
     }
 }
 
+// ---- production run: launches the BUILT release jar (plus Fabric API + Mod Menu) in a vanilla-style client ----
+//   gradlew runProductionClient "-Ptarget=26.3" ["-PprodWorld=<save folder name under run/prod/saves>"]
+// Verifies the packaged jar (remapped + refmap for 1.21.x), unlike runClient/runClientGameTest which use dev classes.
+configurations {
+    prodMods {
+        transitive = false
+        canBeConsumed = false
+    }
+}
+
+tasks.register('runProductionClient', net.fabricmc.loom.task.prod.ClientProductionRunTask) {
+    group = 'fabric'
+    description = 'Launch the built jar in a production (non-dev) client'
+    mods.from(t.legacy ? tasks.named('remapJar') : tasks.named('jar'))
+    mods.from(configurations.prodMods)
+    runDir = layout.projectDirectory.dir('run/prod')
+    minecraftVersion = targetVer
+    if (findProperty('prodWorld')) {
+        programArgs.addAll('--quickPlaySingleplayer', findProperty('prodWorld').toString())
+    }
+}
+
 // version-specific source overlays (Gfx facade, mixin + screen glue, key/sound compat)
 t.overlays.each { sourceSets.client.java.srcDir "src/client/versions/${it}/java" }
 
@@ -94,6 +116,8 @@ repositories {
 }
 
 dependencies {
+    prodMods "net.fabricmc.fabric-api:fabric-api:${t.fapi}"
+    prodMods "maven.modrinth:modmenu:${t.modmenu}"
     minecraft "com.mojang:minecraft:${targetVer}"
 
     if (t.legacy) {
