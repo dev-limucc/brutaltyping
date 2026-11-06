@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** MC 26.1+: renders the particle overlay on the in-game HUD when no screen is open. */
+/** MC 26.1.x only (26.2+ moved the HUD to Hud, see hud-262): renders the particle overlay on the in-game HUD when no screen is open. */
 @Mixin(Gui.class)
 public class GuiMixin {
 

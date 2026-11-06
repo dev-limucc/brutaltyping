@@ -21,7 +21,11 @@ public final class OverlayHooks {
 
     private OverlayHooks() {}
 
+    /** Diagnostic frame counters (read by the client gametest to prove each mixin actually fires). */
+    public static volatile int hudFrames, screenHeadFrames, screenTailFrames;
+
     public static void screenHead(Screen self, Gfx g) {
+        screenHeadFrames++;
         EffectEngine engine = EffectEngine.INSTANCE;
         engine.beginFrame();
 
@@ -36,11 +40,13 @@ public final class OverlayHooks {
     }
 
     public static void screenTail(Screen self, Gfx g) {
+        screenTailFrames++;
         EffectEngine.INSTANCE.renderOverlay(g, self.width, self.height, Minecraft.getInstance().font);
         g.pose().popMatrix();
     }
 
     public static void hud(Gfx g) {
+        hudFrames++;
         Minecraft mc = Minecraft.getInstance();
         if (ScreenNav.current(mc) != null) return;           // screens handled by the Screen mixin
         if (!BrutalConfigManager.get().enabled) return;

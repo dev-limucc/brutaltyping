@@ -64,6 +64,8 @@ public final class EffectEngine {
     public int combo() { return combo; }
     public float shakeX() { return shakeX; }
     public float shakeY() { return shakeY; }
+    public int particleCount() { return particles.size(); }
+    public boolean slamActive() { return slamActive; }
 
     // ── input events (from EditBoxMixin) ─────────────────────────────────────────
     public void onChar(int codepoint, float caretX, float caretY, boolean important) {

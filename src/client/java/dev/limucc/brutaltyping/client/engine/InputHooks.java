@@ -9,7 +9,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.Screen;
-import org.lwjgl.glfw.GLFW;
+import com.mojang.blaze3d.platform.InputConstants;
 
 /**
  * Version-independent half of the EditBox hooks. The per-version {@code EditBoxMixin} only unpacks its
@@ -28,7 +28,7 @@ public final class InputHooks {
     }
 
     public static void keyPressed(EditBox box, int key) {
-        if (key != GLFW.GLFW_KEY_BACKSPACE && key != GLFW.GLFW_KEY_DELETE) return;
+        if (key != InputConstants.KEY_BACKSPACE && key != InputConstants.KEY_DELETE) return;
         if (!shouldFire()) return;
         float[] caret = caret(box);
         EffectEngine.INSTANCE.onDelete(caret[0], caret[1]);

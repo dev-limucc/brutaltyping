@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "brutaltyping-test",
+  "version": "1.0.0",
+  "name": "Brutal Typing client gametest",
+  "environment": "client",
+  "entrypoints": {
+    "fabric-client-gametest": ["dev.limucc.brutaltyping.gametest.BrutalTypingGameTest"]
+  },
+  "depends": {
+    "brutaltyping": "*"
+  }
+}
